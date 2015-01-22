@@ -4,7 +4,7 @@ author: "Edana Merchan"
 date: "January 22, 2015"
 output: html_document
 ---
-## Practical Machine Learning Prediction Assigment
+# Practical Machine Learning Prediction Assigment
 
 ## Summary
 
@@ -61,7 +61,7 @@ It seems that all the variables have some contribution.
 
 Its important to try a couple of models to see is the prediction is accurate.
 
-# Classification tree
+### Classification tree
 
 The basic model by default will be:
 ```{r}
