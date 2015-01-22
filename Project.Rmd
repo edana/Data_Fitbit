@@ -45,9 +45,11 @@ There are many columns that are empty that have to ve cleaned to be able to have
 ```{r}
 #Clean data from NA columns
 features <- training[,colSums(is.na(training))<1]
+testing <- testing[,colSums(is.na(testing))<1]
 
 #The first 2 columns don't have useful information
 features <- features[,8:60]
+testing1 <- testing[,8:60]
 ```
 
 It is important to check for covariates that have virtually no variablility.
@@ -69,6 +71,37 @@ set.seed(123)
 modFit <- train(features$classe ~ ., data = features, method="rpart")
 print(modFit, digits=3)
 ```
+
+```{r}
+print(modFit$finalModel, digits=3)
+```
+
+
+```{r}
+library(rattle)
+fancyRpartPlot(modFit$finalModel)
+```
+
+Now that we have the model we are able to test it in the testing set:
+
+```{r}
+predictions <- predict(modFit, newdata = features)
+print(confusionMatrix(predictions, features$classe), digits=4)
+```
+
+The results are 0.4956 accurate. So we should try to improve the model, including in this case pre-processing and cross validation.
+
+```{r}
+modFit <- train(features$classe ~ .,  preProcess=c("center", "scale"), trControl=trainControl(method = "cv", number = 4), data = features, method="rpart")
+print(modFit, digits=3)
+```
+
+```{r}
+predictions <- predict(modFit, newdata = features)
+print(confusionMatrix(predictions, features$classe), digits=4)
+```
+
+
 
 
 ##References
