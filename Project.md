@@ -233,8 +233,8 @@ The results are 0.4956 accurate. So we should try to improve the model, includin
 
 
 ```r
-modFit <- train(features$classe ~ .,  preProcess=c("center", "scale"), trControl=trainControl(method = "cv", number = 4), data = features, method="rpart")
-print(modFit, digits=3)
+modFit1 <- train(features$classe ~ .,  preProcess=c("center", "scale"), trControl=trainControl(method = "cv", number = 4), data = features, method="rpart")
+print(modFit1, digits=3)
 ```
 
 ```
@@ -262,8 +262,8 @@ print(modFit, digits=3)
 
 
 ```r
-predictions <- predict(modFit, newdata = features)
-print(confusionMatrix(predictions, features$classe), digits=4)
+predictions1 <- predict(modFit1, newdata = features)
+print(confusionMatrix(predictions1, features$classe), digits=4)
 ```
 
 ```
@@ -299,6 +299,99 @@ print(confusionMatrix(predictions, features$classe), digits=4)
 ## Detection Prevalence   0.5209  0.12889  0.26638   0.0000  0.08383
 ## Balanced Accuracy      0.7721  0.63007  0.64431   0.5000  0.72565
 ```
+
+### Random forest
+
+Another model than we can use is random forest
+
+
+```r
+set.seed(123)
+modFit2 <- train(features$classe ~ ., method="rf", preProcess=c("center", "scale"), trControl=trainControl(method = "cv", number = 4), data=features)
+print(modFit2, digits=3)
+```
+
+```
+## Random Forest 
+## 
+## 19622 samples
+##    52 predictor
+##     5 classes: 'A', 'B', 'C', 'D', 'E' 
+## 
+## Pre-processing: centered, scaled 
+## Resampling: Cross-Validated (4 fold) 
+## 
+## Summary of sample sizes: 14717, 14717, 14716, 14716 
+## 
+## Resampling results across tuning parameters:
+## 
+##   mtry  Accuracy  Kappa  Accuracy SD  Kappa SD
+##    2    0.994     0.992  0.000857     0.00108 
+##   27    0.993     0.991  0.001423     0.00180 
+##   52    0.987     0.984  0.003217     0.00407 
+## 
+## Accuracy was used to select the optimal model using  the largest value.
+## The final value used for the model was mtry = 2.
+```
+
+
+```r
+predictions2 <- predict(modFit2, newdata=features)
+print(confusionMatrix(predictions2, features$classe), digits=4)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 5580    0    0    0    0
+##          B    0 3797    0    0    0
+##          C    0    0 3422    0    0
+##          D    0    0    0 3216    0
+##          E    0    0    0    0 3607
+## 
+## Overall Statistics
+##                                      
+##                Accuracy : 1          
+##                  95% CI : (0.9998, 1)
+##     No Information Rate : 0.2844     
+##     P-Value [Acc > NIR] : < 2.2e-16  
+##                                      
+##                   Kappa : 1          
+##  Mcnemar's Test P-Value : NA         
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            1.0000   1.0000   1.0000   1.0000   1.0000
+## Specificity            1.0000   1.0000   1.0000   1.0000   1.0000
+## Pos Pred Value         1.0000   1.0000   1.0000   1.0000   1.0000
+## Neg Pred Value         1.0000   1.0000   1.0000   1.0000   1.0000
+## Prevalence             0.2844   0.1935   0.1744   0.1639   0.1838
+## Detection Rate         0.2844   0.1935   0.1744   0.1639   0.1838
+## Detection Prevalence   0.2844   0.1935   0.1744   0.1639   0.1838
+## Balanced Accuracy      1.0000   1.0000   1.0000   1.0000   1.0000
+```
+
+This is a much veter model for our data, giving a 0.993 acurate prediction
+
+## Conclusions
+
+We applied two different models to the testing data to make predictions clasification trees and random forest. The first one gives a low accurate prediction and the former one gives much better prediction but takes much longer time to process. 
+
+The results applied to the testing data with the random forest model are:
+
+```r
+# Run against the testing set provided 
+print(predict(modFit2, newdata=testing2))
+```
+
+```
+##  [1] B A B A A E D B A A B C B A E E A B B B
+## Levels: A B C D E
+```
+The out of sample error with tht random forest model with preprocessing and cross validation gives (1 - .9714) = 0.0286
 
 
 

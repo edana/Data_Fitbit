@@ -92,17 +92,42 @@ print(confusionMatrix(predictions, features$classe), digits=4)
 The results are 0.4956 accurate. So we should try to improve the model, including in this case pre-processing and cross validation.
 
 ```{r}
-modFit <- train(features$classe ~ .,  preProcess=c("center", "scale"), trControl=trainControl(method = "cv", number = 4), data = features, method="rpart")
-print(modFit, digits=3)
+modFit1 <- train(features$classe ~ .,  preProcess=c("center", "scale"), trControl=trainControl(method = "cv", number = 4), data = features, method="rpart")
+print(modFit1, digits=3)
 ```
 
 ```{r}
-predictions <- predict(modFit, newdata = features)
-print(confusionMatrix(predictions, features$classe), digits=4)
+predictions1 <- predict(modFit1, newdata = features)
+print(confusionMatrix(predictions1, features$classe), digits=4)
 ```
 
+### Random forest
 
+Another model than we can use is random forest
 
+```{r}
+set.seed(123)
+modFit2 <- train(features$classe ~ ., method="rf", preProcess=c("center", "scale"), trControl=trainControl(method = "cv", number = 4), data=features)
+print(modFit2, digits=3)
+```
+
+```{r}
+predictions2 <- predict(modFit2, newdata=features)
+print(confusionMatrix(predictions2, features$classe), digits=4)
+```
+
+This is a much veter model for our data, giving a 0.993 acurate prediction
+
+## Conclusions
+
+We applied two different models to the testing data to make predictions clasification trees and random forest. The first one gives a low accurate prediction and the former one gives much better prediction but takes much longer time to process. 
+
+The results applied to the testing data with the random forest model are:
+```{r}
+# Run against the testing set provided 
+answers = print(predict(modFit2, newdata=testing2))
+```
+The out of sample error with tht random forest model with preprocessing and cross validation gives (1 - .9714) = 0.0286
 
 ##References
 
